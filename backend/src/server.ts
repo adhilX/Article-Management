@@ -5,8 +5,9 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/connectDB";
 import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes";
+import articleRoutes from "./routes/articleRoutes";
 
-import { notFound, errorHandler } from "./middleware/errorMiddleware";
+import { errorHandler } from "./middleware/errorMiddleware";
 
 dotenv.config();
 
@@ -25,13 +26,13 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/articles", articleRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running");
 });
 
 // Error handling
-app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
