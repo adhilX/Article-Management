@@ -1,9 +1,12 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import connectDB from "./config/connectDB";
 import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes";
+
+import { notFound, errorHandler } from "./middleware/errorMiddleware";
 
 dotenv.config();
 
@@ -18,6 +21,7 @@ mongoose.set("debug", true);
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -25,6 +29,10 @@ app.use("/api/auth", authRoutes);
 app.get("/", (req, res) => {
   res.send("API Running");
 });
+
+// Error handling
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

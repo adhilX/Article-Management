@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import User from "../models/userModel";
-import generateToken from "../utils/generateToken";
-import { hashPassword } from "../utils/passwordUtils";
+import { generateAccessToken, generateRefreshToken } from "../utils/generateToken";
+import { hashPassword, comparePassword } from "../utils/passwordUtils";
 
-
+// @desc    Register a new user
+// @route   POST /api/auth/signup
+// @access  Public
 export const registerUser = async (req: Request, res: Response) => {
   console.log("Signup request received:", req.body);
   const { name, email, password } = req.body;
@@ -32,13 +34,53 @@ export const registerUser = async (req: Request, res: Response) => {
   });
 
   if (user) {
+    const refreshToken = generateRefreshToken(user.id);
+    
+    // Set refresh token in cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+    });
+
     res.status(201).json({
       _id: user.id,
       name: user.name,
       email: user.email,
-      token: generateToken(user.id),
+      accessToken: generateAccessToken(user.id),
     });
   } else {
     res.status(400).json({ message: "Invalid user data" });
+  }
+};
+
+// @desc    Authenticate user & get tokens
+// @route   POST /api/auth/login
+// @access  Public
+export const loginUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (user && (await comparePassword(password, user.password))) {
+    const refreshToken = generateRefreshToken(user.id);
+
+    // Set refresh token in cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+    });
+
+    res.json({
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      accessToken: generateAccessToken(user.id),
+    });
+  } else {
+    res.status(401).json({ message: "Invalid email or password" });
   }
 };
