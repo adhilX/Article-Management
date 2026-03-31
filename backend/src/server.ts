@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/connectDB";
-import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes";
 import articleRoutes from "./routes/articleRoutes";
 
@@ -15,9 +14,6 @@ const app = express();
 
 // Connect DB
 connectDB();
-
-// Mongoose Debug
-mongoose.set("debug", true);
 
 // Middleware
 app.use(cors({
