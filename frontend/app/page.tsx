@@ -190,20 +190,26 @@ export default function DashboardPage() {
                 <p className="text-red-400">{error}</p>
                 <button onClick={() => fetchArticles()} className="mt-4 text-sm text-blue-400 hover:underline">Try again</button>
               </div>
-            ) : articles.length === 0 ? (
+            ) : dynamicTags.length === 0 ? (
               <div className="col-span-full py-20 text-center glass-panel rounded-2xl border-white/5">
-                <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Search className="h-8 w-8 text-slate-500" />
-                </div>
-                <p className="text-slate-400 text-lg">No articles found.</p>
-                <button
-                  onClick={() => { setSearchInput(""); setActiveTag(""); }}
-                  className="mt-4 inline-block text-sm text-blue-400 hover:underline"
-                >
-                  Clear all filters
-                </button>
+                <p className="text-slate-400">You haven't written any articles yet.</p>
+                <Link href="/create" className="mt-4 inline-block text-sm text-blue-400 hover:underline">Write your first story</Link>
               </div>
-            ) : (
+            )
+              : articles.length === 0 ? (
+                <div className="col-span-full py-20 text-center glass-panel rounded-2xl border-white/5">
+                  <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="h-8 w-8 text-slate-500" />
+                  </div>
+                  <p className="text-slate-400 text-lg">No articles found.</p>
+                  <button
+                    onClick={() => { setSearchInput(""); setActiveTag(""); }}
+                    className="mt-4 inline-block text-sm text-blue-400 hover:underline"
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              ) : (
               articles.map((article: any) => (
                 <div key={article._id} className="h-full">
                   <ArticleCard article={article} onDelete={handleDeleteClick} />
