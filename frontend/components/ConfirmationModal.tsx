@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { AlertCircle, X, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
