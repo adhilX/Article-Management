@@ -53,7 +53,7 @@ export default function ArticleDetailView() {
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto w-full pt-32 pb-32 text-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
         <p className="text-slate-400">Opening the story...</p>
       </div>
     );
@@ -86,7 +86,7 @@ export default function ArticleDetailView() {
       <header className="mb-12">
         <div className="flex flex-wrap gap-2 mb-6">
           {(article.tags || []).map((tag: string, i: number) => (
-            <span key={i} className="text-[10px] font-bold tracking-widest uppercase bg-purple-500/20 text-purple-300 px-3 py-1.5 rounded-full border border-purple-500/30">
+            <span key={i} className="text-[10px] font-bold tracking-widest uppercase bg-blue-500/20 text-blue-300 px-3 py-1.5 rounded-full border border-blue-500/30">
               {tag}
             </span>
           ))}
@@ -98,7 +98,7 @@ export default function ArticleDetailView() {
         
         <div className="flex items-center justify-between border-t border-b border-white/10 py-6">
           <div className="flex items-center gap-4">
-            {/* <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-purple-500/20 ring-2 ring-white/10">
+            {/* <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-blue-700 flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-blue-500/20 ring-2 ring-white/10">
               {article.author?.name?.charAt(0).toUpperCase() || "A"}
             </div> */}
             <div>

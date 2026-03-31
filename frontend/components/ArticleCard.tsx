@@ -25,9 +25,9 @@ export default function ArticleCard({
   });
 
   return (
-    <div className="glass-panel p-5 rounded-2xl flex flex-col group hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(168,85,247,0.2)] transition-all duration-300 h-full border border-white/5 hover:border-white/10 relative overflow-hidden">
+    <div className="glass-panel p-5 rounded-2xl flex flex-col group hover:-translate-y-1 hover:shadow-[0_15px_40px_-10px_rgba(37,99,235,0.2)] transition-all duration-300 h-full border border-white/5 hover:border-white/10 relative overflow-hidden">
       {/* Decorative gradient blob inside card */}
-      <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all duration-500 pointer-events-none" />
+      <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/20 transition-all duration-500 pointer-events-none" />
 
       <div className="flex-1 mt-2 z-10">
         <div className="flex justify-between items-start mb-3">
@@ -42,7 +42,7 @@ export default function ArticleCard({
         </div>
 
         <Link href={`/articles/${article._id}`} className="block mt-1">
-          <h3 className="text-lg font-bold text-white mb-2 leading-tight group-hover:text-purple-300 transition-colors line-clamp-2">
+          <h3 className="text-lg font-bold text-white mb-2 leading-tight group-hover:text-blue-300 transition-colors line-clamp-2">
             {article.title}
           </h3>
           <p className="text-sm text-slate-400 line-clamp-3 mb-4 leading-relaxed">
@@ -68,16 +68,16 @@ export default function ArticleCard({
           >
             <Trash2 className="h-4 w-4" />
           </button>
-          {/* <Link 
+          <Link 
             href={`/edit/${article._id}`}
             className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-md transition-colors"
             title="Edit Article"
           >
             <FileEdit className="h-4 w-4" />
-          </Link> */}
+          </Link>
             <Link 
               href={`/articles/${article._id}`}
-              className="p-1.5 text-slate-400 hover:text-purple-400 hover:bg-purple-400/10 rounded-md transition-colors"
+              className="p-1.5 text-slate-400 hover:text-blue-400 hover:bg-blue-400/10 rounded-md transition-colors"
               title="View Article"
             >
               <ArrowRight className="h-4 w-4" />

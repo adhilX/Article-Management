@@ -68,7 +68,7 @@ export default function EditArticlePage() {
     return (
       <ProtectedRoute>
         <div className="max-w-4xl mx-auto w-full pt-32 pb-32 text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
           <p className="text-slate-400">Loading article editor...</p>
         </div>
       </ProtectedRoute>
@@ -93,7 +93,7 @@ export default function EditArticlePage() {
               type="button" 
               onClick={handleUpdate}
               disabled={!title || !content || updating}
-              className="btn-primary text-sm px-6 py-2 rounded-full shadow-[0_4px_15px_rgba(168,85,247,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center gap-2"
+              className="btn-primary text-sm px-6 py-2 rounded-full shadow-[0_4px_15px_rgba(37,99,235,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center gap-2"
             >
               <Save className="h-4 w-4" />
               {updating ? "Updating..." : "Update Article"}

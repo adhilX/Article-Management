@@ -119,13 +119,13 @@ export default function DashboardPage() {
         <div className="space-y-6 pt-4">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="relative w-full max-w-xl group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-focus-within:text-purple-400 transition-colors" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
               <input
                 type="text"
                 placeholder="Search articles by title, description or tags..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-500/50 transition-all"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all"
               />
               {searchInput && (
                 <button
@@ -150,7 +150,7 @@ export default function DashboardPage() {
             <button
               onClick={() => { setActiveTag(""); setCurrentPage(1); }}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all border ${activeTag === ""
-                ? "bg-purple-500 text-white border-purple-500"
+                ? "bg-blue-600 text-white border-blue-600"
                 : "bg-white/5 text-slate-400 border-white/10 hover:border-white/20 hover:text-white"
                 }`}
             >
@@ -161,7 +161,7 @@ export default function DashboardPage() {
                 key={tag}
                 onClick={() => handleTagClick(tag)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all border ${activeTag === tag
-                  ? "bg-purple-500 text-white border-purple-500"
+                  ? "bg-blue-600 text-white border-blue-600"
                   : "bg-white/5 text-slate-400 border-white/10 hover:border-white/20 hover:text-white"
                   }`}
               >
@@ -188,7 +188,7 @@ export default function DashboardPage() {
             ) : error ? (
               <div className="col-span-full py-20 text-center glass-panel rounded-2xl border-red-500/20">
                 <p className="text-red-400">{error}</p>
-                <button onClick={() => fetchArticles()} className="mt-4 text-sm text-purple-400 hover:underline">Try again</button>
+                <button onClick={() => fetchArticles()} className="mt-4 text-sm text-blue-400 hover:underline">Try again</button>
               </div>
             ) : articles.length === 0 ? (
               <div className="col-span-full py-20 text-center glass-panel rounded-2xl border-white/5">
@@ -198,7 +198,7 @@ export default function DashboardPage() {
                 <p className="text-slate-400 text-lg">No articles found.</p>
                 <button
                   onClick={() => { setSearchInput(""); setActiveTag(""); }}
-                  className="mt-4 inline-block text-sm text-purple-400 hover:underline"
+                  className="mt-4 inline-block text-sm text-blue-400 hover:underline"
                 >
                   Clear all filters
                 </button>
@@ -238,7 +238,7 @@ export default function DashboardPage() {
                         onClick={() => setCurrentPage(pageNum)}
                         disabled={loading}
                         className={`w-10 h-10 rounded-xl font-bold transition-all border ${currentPage === pageNum
-                          ? "bg-purple-500 text-white border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
+                          ? "bg-blue-600 text-white border-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.4)]"
                           : "glass-panel text-slate-400 border-white/5 hover:border-white/20 hover:text-white"
                           }`}
                       >

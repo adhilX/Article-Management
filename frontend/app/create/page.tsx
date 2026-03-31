@@ -56,7 +56,7 @@ export default function CreateArticlePage() {
               type="button"
               onClick={handlePublish}
               disabled={!title || !content}
-              className="btn-primary text-sm rounded-full shadow-[0_4px_15px_rgba(168,85,247,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center gap-2"
+              className="btn-primary text-sm rounded-full shadow-[0_4px_15px_rgba(37,99,235,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center gap-2"
             >
               <Send className="h-4 w-4" />
               Post
