@@ -32,7 +32,6 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col relative selection:bg-purple-500/30 selection:text-white">
         <StoreProvider>
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none mix-blend-overlay"></div>
-          <Navbar />
           <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10 flex flex-col">
             {children}
           </main>

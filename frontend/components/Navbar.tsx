@@ -4,15 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
-import { logout } from "../store/authSlice";
+import { logout } from "../store/slice/authSlice";
 
 export default function Navbar() {
   const pathname = usePathname();
   const dispatch = useDispatch();
-  
+
   // Note: We might not be hydrated fully immediately, but for UI we assume generic state mapping
   const auth = useSelector((state: RootState) => state.auth);
-  
+
   // Example dummy login toggle for pure UI demonstration
   const handleLogout = () => {
     dispatch(logout());
@@ -33,7 +33,7 @@ export default function Navbar() {
             </Link>
 
             <div className="hidden md:flex items-center space-x-1">
-              <NavLink href="/dashboard" currentPath={pathname}>Dashboard</NavLink>
+              <NavLink href="/" currentPath={pathname}>Feed</NavLink>
               <NavLink href="/create" currentPath={pathname}>Write</NavLink>
             </div>
           </div>
@@ -70,15 +70,14 @@ export default function Navbar() {
 
 function NavLink({ href, currentPath, children }: { href: string; currentPath: string; children: React.ReactNode }) {
   const isActive = currentPath.startsWith(href) && href !== "/" || currentPath === href;
-  
+
   return (
     <Link
       href={href}
-      className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${
-        isActive 
-        ? "text-white bg-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]" 
-        : "text-slate-400 hover:text-white hover:bg-white/5"
-      }`}
+      className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${isActive
+          ? "text-white bg-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]"
+          : "text-slate-400 hover:text-white hover:bg-white/5"
+        }`}
     >
       {children}
     </Link>

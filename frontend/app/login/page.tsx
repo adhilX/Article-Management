@@ -3,19 +3,39 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../../store/authSlice";
+import { setCredentials } from "../../store/slice/authSlice";
 import { useRouter } from "next/navigation";
+import { loginUser } from "../../services/authServices";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(setCredentials({ user: { name: "Demo User", email }, token: "demo-token" }));
-    router.push("/dashboard");
+    setError("");
+    setLoading(true);
+
+    try {
+      const data = await loginUser({ email, password });
+      dispatch(setCredentials({
+        user: { name: data.name, email: data.email },
+        token: data.accessToken
+      }));
+      router.push("/");
+    } catch (err: any) {
+      console.error("Login error:", err);
+      setError(err.response?.data?.message || "Invalid email or password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,17 +50,23 @@ export default function LoginPage() {
           </div>
           <h2 className="text-3xl font-bold mb-2 text-white">Welcome back</h2>
           <p className="text-slate-400 text-sm mb-8">Sign in to manage your articles</p>
-          
+
           <form onSubmit={handleLogin} className="space-y-4 text-left">
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-xs text-center">
+                {error}
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Email</label>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="glass-input" 
+                className="glass-input"
                 placeholder="you@example.com"
                 required
+                disabled={loading}
               />
             </div>
             <div>
@@ -48,20 +74,38 @@ export default function LoginPage() {
                 <label className="block text-sm font-medium text-slate-300">Password</label>
                 <a href="#" className="text-xs text-purple-400 hover:text-purple-300 transition-colors">Forgot?</a>
               </div>
-              <input 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="glass-input" 
-                placeholder="••••••••"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="glass-input pr-10"
+                  placeholder="••••••••"
+                  required
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-200 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
             </div>
-            <button type="submit" className="btn-primary w-full mt-6 py-3 text-sm tracking-wide">
-              Sign In
+            <button
+              type="submit"
+              disabled={loading}
+              className={`btn-primary w-full mt-6 py-3 text-sm tracking-wide bg-gradient-to-r from-purple-600 to-pink-600 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
+            >
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
-          
+
           <p className="mt-8 text-sm text-slate-400">
             Don't have an account? <Link href="/signup" className="text-purple-400 hover:text-purple-300 transition-colors font-medium">Create one</Link>
           </p>

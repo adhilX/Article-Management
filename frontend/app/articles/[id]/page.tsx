@@ -1,9 +1,64 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { getArticleById } from "../../../services/articleServices";
 
 export default function ArticleDetailView() {
+  const { id } = useParams();
+  const [article, setArticle] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (id) {
+      fetchArticle();
+    }
+  }, [id]);
+
+  const fetchArticle = async () => {
+    try {
+      setLoading(true);
+      const data = await getArticleById(id as string);
+      setArticle(data);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to load article");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="max-w-3xl mx-auto w-full pt-32 pb-32 text-center">
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mb-4"></div>
+        <p className="text-slate-400">Opening the story...</p>
+      </div>
+    );
+  }
+
+  if (error || !article) {
+    return (
+      <div className="max-w-3xl mx-auto w-full pt-32 pb-32 text-center">
+        <div className="glass-panel p-10 rounded-3xl border-red-500/20">
+          <p className="text-red-400 text-lg mb-6">{error || "Article not found"}</p>
+          <Link href="/" className="btn-primary px-8">Back Home</Link>
+        </div>
+      </div>
+    );
+  }
+
+  const dateStr = new Date(article.createdAt).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+
   return (
     <article className="max-w-3xl mx-auto w-full pt-12 pb-32">
-      <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition-colors mb-10 group bg-white/5 py-1.5 px-3 rounded-full hover:bg-white/10">
+      <Link href="/" className="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition-colors mb-10 group bg-white/5 py-1.5 px-3 rounded-full hover:bg-white/10">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
         </svg>
@@ -12,26 +67,25 @@ export default function ArticleDetailView() {
       
       <header className="mb-12">
         <div className="flex flex-wrap gap-2 mb-6">
-          <span className="text-[10px] font-bold tracking-widest uppercase bg-purple-500/20 text-purple-300 px-3 py-1.5 rounded-full border border-purple-500/30">
-            DevOps
-          </span>
-          <span className="text-[10px] font-bold tracking-widest uppercase bg-pink-500/20 text-pink-300 px-3 py-1.5 rounded-full border border-pink-500/30">
-            Node.js
-          </span>
+          {(article.tags || []).map((tag: string, i: number) => (
+            <span key={i} className="text-[10px] font-bold tracking-widest uppercase bg-purple-500/20 text-purple-300 px-3 py-1.5 rounded-full border border-purple-500/30">
+              {tag}
+            </span>
+          ))}
         </div>
         
         <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-8 leading-tight">
-          Building Microservices with Node.js and Docker
+          {article.title}
         </h1>
         
         <div className="flex items-center justify-between border-t border-b border-white/10 py-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-purple-500/20 ring-2 ring-white/10">
-              D
+              {article.author?.name?.charAt(0).toUpperCase() || "A"}
             </div>
             <div>
-              <p className="font-semibold text-white">Demo User</p>
-              <p className="text-sm text-slate-400">Mar 20, 2026 · 8 min read</p>
+              <p className="font-semibold text-white">{article.author?.name || "Author"}</p>
+              <p className="text-sm text-slate-400">{dateStr} · {Math.ceil(article.content.split(" ").length / 200)} min read</p>
             </div>
           </div>
           
@@ -52,28 +106,12 @@ export default function ArticleDetailView() {
 
       <div className="prose prose-invert prose-lg max-w-none text-slate-300 font-serif pb-12">
         <p className="text-2xl text-slate-200 mb-8 font-sans font-light leading-relaxed">
-          Learn how to establish a robust microservices architecture utilizing containerization to ensure your software is infinitely scalable and easy to deploy across environments.
+          {article.description}
         </p>
         
-        <h2 className="text-3xl font-bold text-white mt-16 mb-6 font-sans">Introduction to Microarchitectures</h2>
-        <p className="mb-6 leading-relaxed">
-          The shift from monolithic applications to microservices has empowered development teams to scale rapidly, deploy independently, and iterate faster. Rather than deploying one massive codebase where a single error can crash the entire system, microservices isolate failures.
-        </p>
-        <p className="mb-8 leading-relaxed">
-          In this article, we'll demonstrate setting up a fully dockerized Node.js service mesh that communicates asynchronously.
-        </p>
-        
-        <div className="my-16 p-10 glass-panel rounded-2xl border border-purple-500/30 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl group-hover:bg-pink-500/20 transition-colors duration-700"></div>
-          <p className="text-2xl font-medium text-white italic mb-4 relative z-10 leading-relaxed font-sans">
-            "Containerization isn't just about shipping code, it's about shipping the identical operating environment with it."
-          </p>
+        <div className="whitespace-pre-wrap leading-relaxed">
+          {article.content}
         </div>
-        
-        <h2 className="text-3xl font-bold text-white mt-16 mb-6 font-sans">Dockerizing your Node Application</h2>
-        <p className="mb-6 leading-relaxed">
-          The first step to building a resilient microservice is abstracting it into its own container image. We start by defining a <code className="bg-slate-800 text-pink-400 px-2 py-1 rounded text-sm font-mono border border-slate-700">Dockerfile</code> that extends a lightweight Node Alpine image.
-        </p>
       </div>
     </article>
   );

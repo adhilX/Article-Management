@@ -43,11 +43,13 @@ export const createArticle = async (req: AuthRequest, res: Response, next: NextF
       return;
     }
 
+    const tagsArray = Array.isArray(tags) ? tags : [];
+
     const article = await Article.create({
       title,
       content,
       description,
-      tags,
+      tags: tagsArray,
       author: req.user._id,
     });
 
@@ -76,7 +78,9 @@ export const updateArticle = async (req: AuthRequest, res: Response, next: NextF
       article.title = title || article.title;
       article.content = content || article.content;
       article.description = description || article.description;
-      article.tags = tags || article.tags;
+      if (tags !== undefined) {
+        article.tags = Array.isArray(tags) ? tags : [];
+      }
 
       const updatedArticle = await article.save();
       res.json(updatedArticle);
