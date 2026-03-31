@@ -4,8 +4,8 @@ import { AuthRequest } from "../middleware/authMiddleware";
 
 // @desc    Get all articles
 // @route   GET /api/articles
-// @access  Public
-export const getArticles = async (req: Request, res: Response, next: NextFunction) => {
+// @access  Private
+export const getArticles = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 6;
@@ -14,7 +14,7 @@ export const getArticles = async (req: Request, res: Response, next: NextFunctio
     const search = req.query.search as string;
     const tag = req.query.tag as string;
 
-    let query: any = {};
+    let query: any = { author: req.user._id };
 
     if (search) {
       query.$or = [
@@ -51,10 +51,10 @@ export const getArticles = async (req: Request, res: Response, next: NextFunctio
 
 // @desc    Get single article
 // @route   GET /api/articles/:id
-// @access  Public
-export const getArticleById = async (req: Request, res: Response, next: NextFunction) => {
+// @access  Private
+export const getArticleById = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const article = await Article.findById(req.params.id).populate("author", "name email");
+    const article = await Article.findOne({ _id: req.params.id, author: req.user._id }).populate("author", "name email");
 
     if (article) {
       res.json(article);

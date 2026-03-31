@@ -7,11 +7,11 @@ const router = express.Router();
 router.get("/tags", protect, getUniqueTags);
 
 router.route("/")
-  .get(getArticles)
+  .get(protect, getArticles)
   .post(protect, createArticle);
 
 router.route("/:id")
-    .get(getArticleById)
+    .get(protect, getArticleById)
     .put(protect, updateArticle)
     .delete(protect, deleteArticle);
 
