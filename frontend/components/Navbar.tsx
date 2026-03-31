@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
@@ -9,17 +10,35 @@ import { logout } from "../store/slice/authSlice";
 export default function Navbar() {
   const pathname = usePathname();
   const dispatch = useDispatch();
-
-  // Note: We might not be hydrated fully immediately, but for UI we assume generic state mapping
   const auth = useSelector((state: RootState) => state.auth);
 
-  // Example dummy login toggle for pure UI demonstration
+  const [visible, setVisible] = useState(true);
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+      
+      // Show if scrolling up or at the very top
+      // Hide if scrolling down and moved past 100px
+      const isVisible = prevScrollPos > currentScrollPos || currentScrollPos < 10;
+      
+      setVisible(isVisible);
+      setPrevScrollPos(currentScrollPos);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [prevScrollPos]);
+
   const handleLogout = () => {
     dispatch(logout());
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full glass-panel border-b border-white/5 border-l-0 border-r-0 border-t-0">
+    <nav className={`sticky top-0 z-50 w-full glass-panel border-b border-white/5 border-l-0 border-r-0 border-t-0 transition-transform duration-300 ${
+      visible ? "translate-y-0" : "-translate-y-full shadow-none"
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-8">
@@ -39,7 +58,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-4">
-            {auth.token ? (
+            {auth.token && (
               <div className="flex items-center gap-4">
                 <span className="text-sm text-slate-400 hidden sm:block">
                   {auth.user?.name || "Author"}
@@ -50,15 +69,6 @@ export default function Navbar() {
                 >
                   Sign Out
                 </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <Link href="/login" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-                  Log in
-                </Link>
-                <Link href="/signup" className="text-sm font-medium btn-primary py-1.5 px-4 rounded-full text-white">
-                  Get Started
-                </Link>
               </div>
             )}
           </div>

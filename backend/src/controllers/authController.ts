@@ -37,7 +37,7 @@ export const registerUser = async (req: Request, res: Response, next: NextFuncti
 
     if (user) {
       const refreshToken = generateRefreshToken(user.id);
-      
+
       // set refresh token in cookie
       setCookie(res, refreshToken, 15 * 24 * 60 * 60 * 1000);
       res.status(201).json({

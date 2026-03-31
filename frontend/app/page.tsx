@@ -150,8 +150,8 @@ export default function DashboardPage() {
             <button
               onClick={() => { setActiveTag(""); setCurrentPage(1); }}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all border ${activeTag === ""
-                  ? "bg-purple-500 text-white border-purple-500"
-                  : "bg-white/5 text-slate-400 border-white/10 hover:border-white/20 hover:text-white"
+                ? "bg-purple-500 text-white border-purple-500"
+                : "bg-white/5 text-slate-400 border-white/10 hover:border-white/20 hover:text-white"
                 }`}
             >
               All Topics
@@ -161,8 +161,8 @@ export default function DashboardPage() {
                 key={tag}
                 onClick={() => handleTagClick(tag)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all border ${activeTag === tag
-                    ? "bg-purple-500 text-white border-purple-500"
-                    : "bg-white/5 text-slate-400 border-white/10 hover:border-white/20 hover:text-white"
+                  ? "bg-purple-500 text-white border-purple-500"
+                  : "bg-white/5 text-slate-400 border-white/10 hover:border-white/20 hover:text-white"
                   }`}
               >
                 {tag}
@@ -238,8 +238,8 @@ export default function DashboardPage() {
                         onClick={() => setCurrentPage(pageNum)}
                         disabled={loading}
                         className={`w-10 h-10 rounded-xl font-bold transition-all border ${currentPage === pageNum
-                            ? "bg-purple-500 text-white border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
-                            : "glass-panel text-slate-400 border-white/5 hover:border-white/20 hover:text-white"
+                          ? "bg-purple-500 text-white border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.4)]"
+                          : "glass-panel text-slate-400 border-white/5 hover:border-white/20 hover:text-white"
                           }`}
                       >
                         {pageNum}

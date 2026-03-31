@@ -7,32 +7,39 @@ import { setCredentials } from "../../store/slice/authSlice";
 import { useRouter } from "next/navigation";
 import { loginUser } from "../../services/authServices";
 import { Eye, EyeOff } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, LoginFormData } from "../../validations/authSchema";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
 
     try {
-      const data = await loginUser({ email, password });
+      const response = await loginUser(data);
       dispatch(setCredentials({
-        user: { name: data.name, email: data.email },
-        token: data.accessToken
+        user: { name: response.name, email: response.email },
+        token: response.accessToken
       }));
       router.push("/");
     } catch (err: any) {
       console.error("Login error:", err);
-      setError(err.response?.data?.message || "Invalid email or password");
+      toast.error(err.response?.data?.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }
@@ -51,37 +58,30 @@ export default function LoginPage() {
           <h2 className="text-3xl font-bold mb-2 text-white">Welcome back</h2>
           <p className="text-slate-400 text-sm mb-8">Sign in to manage your articles</p>
 
-          <form onSubmit={handleLogin} className="space-y-4 text-left">
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-xs text-center">
-                {error}
-              </div>
-            )}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-left">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Email</label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="glass-input"
+                type="text"
+                {...register("email")}
+                className={`glass-input ${errors.email ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : ""}`}
                 placeholder="you@example.com"
-                required
                 disabled={loading}
               />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
+              )}
             </div>
             <div>
               <div className="flex justify-between items-center mb-1">
                 <label className="block text-sm font-medium text-slate-300">Password</label>
-                <a href="#" className="text-xs text-purple-400 hover:text-purple-300 transition-colors">Forgot?</a>
               </div>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="glass-input pr-10"
+                  {...register("password")}
+                  className={`glass-input pr-10 ${errors.password ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : ""}`}
                   placeholder="••••••••"
-                  required
                   disabled={loading}
                 />
                 <button
@@ -96,6 +96,9 @@ export default function LoginPage() {
                   )}
                 </button>
               </div>
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
+              )}
             </div>
             <button
               type="submit"

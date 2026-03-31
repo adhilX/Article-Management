@@ -7,33 +7,39 @@ import { setCredentials } from "../../store/slice/authSlice";
 import { useRouter } from "next/navigation";
 import { registerUser } from "../../services/authServices";
 import { Eye, EyeOff } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signupSchema, SignupFormData } from "../../validations/authSchema";
+import toast from "react-hot-toast";
 
 export default function SignupPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+  });
+
+  const onSubmit = async (data: SignupFormData) => {
     setLoading(true);
 
     try {
-      const data = await registerUser({ name, email, password });
+      const response = await registerUser(data);
       dispatch(setCredentials({
-        user: { name: data.name, email: data.email },
-        token: data.accessToken
+        user: { name: response.name, email: response.email },
+        token: response.accessToken
       }));
       router.push("/");
     } catch (err: any) {
       console.error("Signup error:", err);
-      setError(err.response?.data?.message || "An error occurred during signup");
+      toast.error(err.response?.data?.message || "An error occurred during signup");
     } finally {
       setLoading(false);
     }
@@ -52,46 +58,41 @@ export default function SignupPage() {
           <h2 className="text-3xl font-bold mb-2 text-white">Create Account</h2>
           <p className="text-slate-400 text-sm mb-8">Join to start writing articles</p>
 
-          <form onSubmit={handleSignup} className="space-y-4 text-left">
-            {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-3 rounded-lg text-xs">
-                {error}
-              </div>
-            )}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-left">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Full Name</label>
               <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="glass-input"
+                {...register("name")}
+                className={`glass-input ${errors.name ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : ""}`}
                 placeholder="John Doe"
-                required
                 disabled={loading}
               />
+              {errors.name && (
+                <p className="mt-1 text-xs text-red-400">{errors.name.message}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Email</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="glass-input"
+                {...register("email")}
+                className={`glass-input ${errors.email ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : ""}`}
                 placeholder="you@example.com"
-                required
                 disabled={loading}
               />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-1">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="glass-input pr-10"
+                  {...register("password")}
+                  className={`glass-input pr-10 ${errors.password ? "border-red-500/50 focus:border-red-500 focus:ring-red-500/20" : ""}`}
                   placeholder="••••••••"
-                  required
                   disabled={loading}
                 />
                 <button
@@ -106,6 +107,9 @@ export default function SignupPage() {
                   )}
                 </button>
               </div>
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
+              )}
             </div>
             <button
               type="submit"
