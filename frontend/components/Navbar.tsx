@@ -43,9 +43,9 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white font-bold group-hover:shadow-[0_0_15px_rgba(37,99,235,0.5)] transition-all">
+              {/* <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white font-bold group-hover:shadow-[0_0_15px_rgba(37,99,235,0.5)] transition-all">
                 A
-              </div>
+              </div> */}
               <span className="font-bold text-xl tracking-tight text-white group-hover:opacity-80 transition-opacity hidden sm:block">
                 Article Platform
               </span>
