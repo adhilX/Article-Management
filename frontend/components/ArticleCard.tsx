@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Trash2, FileEdit, ArrowRight } from "lucide-react";
 
 interface Article {
   _id: string;
@@ -51,13 +52,13 @@ export default function ArticleCard({
       </div>
 
       <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between z-10 w-full">
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-slate-600 to-slate-400 flex items-center justify-center text-[10px] font-bold text-white shadow-inner">
             {article.author?.name?.charAt(0).toUpperCase() || "A"}
           </div>
           <span className="text-xs font-medium text-slate-400">{article.author?.name || "Author"}</span>
         </div>
-        
+         */}
         <div className="flex gap-2">
           <button 
             type="button"
@@ -65,22 +66,22 @@ export default function ArticleCard({
             className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-colors"
             title="Delete Article"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            <Trash2 className="h-4 w-4" />
           </button>
-          <Link 
+          {/* <Link 
             href={`/edit/${article._id}`}
             className="p-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-md transition-colors"
             title="Edit Article"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-          </Link>
-          <Link 
-            href={`/articles/${article._id}`}
-            className="p-1.5 text-slate-400 hover:text-purple-400 hover:bg-purple-400/10 rounded-md transition-colors"
-            title="View Article"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-          </Link>
+            <FileEdit className="h-4 w-4" />
+          </Link> */}
+            <Link 
+              href={`/articles/${article._id}`}
+              className="p-1.5 text-slate-400 hover:text-purple-400 hover:bg-purple-400/10 rounded-md transition-colors"
+              title="View Article"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </Link>
         </div>
       </div>
     </div>

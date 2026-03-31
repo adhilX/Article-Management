@@ -32,10 +32,10 @@ export default function Navbar() {
               </span>
             </Link>
 
-            <div className="hidden md:flex items-center space-x-1">
+            {/* <div className="hidden md:flex items-center space-x-1">
               <NavLink href="/" currentPath={pathname}>Feed</NavLink>
               <NavLink href="/create" currentPath={pathname}>Write</NavLink>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex items-center space-x-4">

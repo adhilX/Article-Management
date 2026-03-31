@@ -2,14 +2,20 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-import { getArticleById } from "../../../services/articleServices";
+import { useRouter, useParams } from "next/navigation";
+import { getArticleById, deleteArticle } from "../../../services/articleServices";
+import { ArrowLeft, FileEdit, Trash2, Calendar, Clock } from "lucide-react";
+import toast from "react-hot-toast";
+import ConfirmationModal from "../../../components/ConfirmationModal";
 
 export default function ArticleDetailView() {
   const { id } = useParams();
   const [article, setArticle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const router = useRouter();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -27,6 +33,20 @@ export default function ArticleDetailView() {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const confirmDelete = async () => {
+    try {
+      setDeleting(true);
+      await deleteArticle(id as string);
+      toast.success("Article deleted successfully");
+      router.push("/");
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to delete article");
+    } finally {
+      setDeleting(false);
+      setDeleteModalOpen(false);
     }
   };
 
@@ -59,10 +79,8 @@ export default function ArticleDetailView() {
   return (
     <article className="max-w-3xl mx-auto w-full pt-12 pb-32">
       <Link href="/" className="inline-flex items-center text-sm font-medium text-slate-400 hover:text-white transition-colors mb-10 group bg-white/5 py-1.5 px-3 rounded-full hover:bg-white/10">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-        </svg>
-        Back to Dashboard
+        <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+        Back
       </Link>
       
       <header className="mb-12">
@@ -80,25 +98,38 @@ export default function ArticleDetailView() {
         
         <div className="flex items-center justify-between border-t border-b border-white/10 py-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-purple-500/20 ring-2 ring-white/10">
+            {/* <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-lg font-bold text-white shadow-lg shadow-purple-500/20 ring-2 ring-white/10">
               {article.author?.name?.charAt(0).toUpperCase() || "A"}
-            </div>
+            </div> */}
             <div>
-              <p className="font-semibold text-white">{article.author?.name || "Author"}</p>
-              <p className="text-sm text-slate-400">{dateStr} · {Math.ceil(article.content.split(" ").length / 200)} min read</p>
+              {/* <p className="font-semibold text-white">{article.author?.name || "Author"}</p> */}
+              <div className="flex items-center gap-4 text-sm text-slate-400 mt-1">
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5" />
+                  {dateStr}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5" />
+                  {Math.ceil(article.content.split(" ").length / 200)} min read
+                </span>
+              </div>
             </div>
           </div>
           
           <div className="flex items-center gap-3">
-            <button className="p-2.5 text-slate-400 hover:text-pink-400 hover:bg-pink-400/10 rounded-full transition-all border border-transparent hover:border-pink-400/30">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-              </svg>
-            </button>
-            <button className="p-2.5 text-slate-400 hover:text-indigo-400 hover:bg-indigo-400/10 rounded-full transition-all border border-transparent hover:border-indigo-400/30">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
-              </svg>
+            <Link 
+              href={`/edit/${article._id}`}
+              className="p-2.5 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-all border border-transparent hover:border-white/20"
+              title="Edit Article"
+            >
+              <FileEdit className="h-5 w-5" />
+            </Link>
+            <button 
+              onClick={() => setDeleteModalOpen(true)}
+              className="p-2.5 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-full transition-all border border-transparent hover:border-red-400/30"
+              title="Delete Article"
+            >
+              <Trash2 className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -113,6 +144,15 @@ export default function ArticleDetailView() {
           {article.content}
         </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Delete Article"
+        message="Are you sure you want to delete this article? This action cannot be undone."
+        isLoading={deleting}
+      />
     </article>
   );
 }

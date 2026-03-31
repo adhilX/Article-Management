@@ -7,8 +7,43 @@ import { AuthRequest } from "../middleware/authMiddleware";
 // @access  Public
 export const getArticles = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const articles = await Article.find().populate("author", "name email");
-    res.json(articles);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 6;
+    const skip = (page - 1) * limit;
+
+    const search = req.query.search as string;
+    const tag = req.query.tag as string;
+
+    let query: any = {};
+
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { tags: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (tag) {
+      query.tags = tag;
+    }
+
+    const total = await Article.countDocuments(query);
+    const articles = await Article.find(query)
+      .populate("author", "name email")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
+      articles,
+      pagination: {
+        total,
+        page,
+        pages: Math.ceil(total / limit),
+        limit,
+      },
+    });
   } catch (error) {
     next(error);
   }
@@ -111,6 +146,25 @@ export const deleteArticle = async (req: AuthRequest, res: Response, next: NextF
     } else {
       res.status(404).json({ message: "Article not found" });
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get all unique tags for the logged-in user
+// @route   GET /api/articles/tags
+// @access  Private
+export const getUniqueTags = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const result = await Article.aggregate([
+      { $match: { author: req.user._id } },
+      { $unwind: "$tags" },
+      { $group: { _id: { $toLower: "$tags" } } },
+      { $sort: { _id: 1 } },
+    ]);
+
+    const tags = result.map((item) => item._id);
+    res.json(tags);
   } catch (error) {
     next(error);
   }

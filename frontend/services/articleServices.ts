@@ -7,8 +7,8 @@ export interface ArticleData {
   tags?: string[];
 }
 
-export const getArticles = async () => {
-  const response = await api.get("/articles");
+export const getArticles = async (params: { search?: string; tag?: string; page?: number; limit?: number } = {}) => {
+  const response = await api.get("/articles", { params });
   return response.data;
 };
 
@@ -29,5 +29,10 @@ export const updateArticle = async (id: string, articleData: ArticleData) => {
 
 export const deleteArticle = async (id: string) => {
   const response = await api.delete(`/articles/${id}`);
+  return response.data;
+};
+
+export const getTags = async () => {
+  const response = await api.get("/articles/tags");
   return response.data;
 };
